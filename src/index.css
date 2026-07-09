@@ -1,0 +1,360 @@
+/* Google Fonts: Inter + Manrope */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap');
+
+/* Material Symbols Outlined (variable font with FILL support) */
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  /* ── Material 3 Color System ── */
+  --color-inverse-on-surface: #eff1f2;
+  --color-outline: #70797b;
+  --color-surface-bright: #f8f9fa;
+  --color-on-tertiary-container: #fffbff;
+  --color-on-primary: #ffffff;
+  --color-secondary: #46636d;
+  --color-inverse-primary: #93d0e0;
+  --color-tertiary-container: #9f6840;
+  --color-secondary-fixed-dim: #adcbd7;
+  --color-on-primary-fixed-variant: #004e5c;
+  --color-surface-container-high: #e7e8e9;
+  --color-on-primary-fixed: #001f26;
+  --color-on-tertiary: #ffffff;
+  --color-surface: #f8f9fa;
+  --color-surface-container: #eceeef;
+  --color-surface-container-highest: #e1e3e4;
+  --color-inverse-surface: #2e3132;
+  --color-primary: #226472;
+  --color-surface-dim: #d8dadb;
+  --color-on-primary-container: #f9fdff;
+  --color-primary-fixed-dim: #93d0e0;
+  --color-on-surface: #191c1d;
+  --color-error-container: #ffdad6;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-fixed: #001f27;
+  --color-on-error-container: #93000a;
+  --color-surface-container-low: #f2f4f5;
+  --color-on-secondary-fixed-variant: #2e4b54;
+  --color-on-tertiary-fixed-variant: #693b17;
+  --color-secondary-fixed: #c9e8f3;
+  --color-tertiary: #82502a;
+  --color-error: #ba1a1a;
+  --color-tertiary-fixed-dim: #fcb88a;
+  --color-on-secondary-container: #4a6771;
+  --color-primary-container: #3f7d8c;
+  --color-surface-tint: #256675;
+  --color-tertiary-fixed: #ffdcc6;
+  --color-on-tertiary-fixed: #301400;
+  --color-outline-variant: #bfc8cb;
+  --color-on-error: #ffffff;
+  --color-primary-fixed: #afecfd;
+  --color-on-surface-variant: #40484b;
+  --color-on-background: #191c1d;
+  --color-background: #f8f9fa;
+  --color-secondary-container: #c6e5f0;
+  --color-surface-variant: #e1e3e4;
+
+  /* ── Typography Scale (Material 3) ── */
+  --font-display-lg: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-headline-lg: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-headline-lg-mobile: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-headline-md: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-label-md: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-label-sm: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-body-lg: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-body-md: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --text-display-lg: 48px / 56px var(--font-display-lg);
+  --text-display-lg-tracking: -0.02em;
+  --text-display-lg-weight: 700;
+
+  --text-headline-lg: 32px / 40px var(--font-headline-lg);
+  --text-headline-lg-weight: 600;
+
+  --text-headline-lg-mobile: 28px / 36px var(--font-headline-lg-mobile);
+  --text-headline-lg-mobile-weight: 600;
+
+  --text-headline-md: 24px / 32px var(--font-headline-md);
+  --text-headline-md-weight: 600;
+
+  --text-label-md: 14px / 20px var(--font-label-md);
+  --text-label-md-tracking: 0.01em;
+  --text-label-md-weight: 500;
+
+  --text-label-sm: 12px / 16px var(--font-label-sm);
+  --text-label-sm-tracking: 0.05em;
+  --text-label-sm-weight: 600;
+
+  --text-body-lg: 18px / 28px var(--font-body-lg);
+  --text-body-lg-weight: 400;
+
+  --text-body-md: 16px / 24px var(--font-body-md);
+  --text-body-md-weight: 400;
+
+  /* ── Spacing Tokens ── */
+  --spacing-margin-desktop: 40px;
+  --spacing-margin-mobile: 16px;
+  --spacing-container-max: 1120px;
+  --spacing-gutter: 24px;
+  --spacing-base: 4px;
+
+  /* ── Border Radius ── */
+  --radius-2xl: 1rem;
+  --radius-full: 9999px;
+
+  /* ── Animations ── */
+  --animate-blob: blob 7s infinite;
+  --animate-fade-in-up: fadeInUp 0.8s ease-out forwards;
+  --animate-pulse-glow: pulseGlow 2s infinite;
+  --animate-shimmer: shimmer 2s infinite;
+  --animate-progress: progress 1s ease-out forwards;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+html,
+body {
+  @apply bg-white dark:bg-gray-950;
+
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+  }
+}
+
+/* ── Custom Keyframes ── */
+@keyframes blob {
+  0%   { transform: translate(0px, 0px) scale(1); }
+  33%  { transform: translate(30px, -50px) scale(1.1); }
+  66%  { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+@keyframes fadeInUp {
+  0%   { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 100, 114, 0.4); }
+  50%        { box-shadow: 0 0 0 10px rgba(34, 100, 114, 0); }
+}
+
+@keyframes shimmer {
+  0%   { left: -100%; }
+  100% { left: 100%; }
+}
+
+@keyframes progress {
+  0% { stroke-dasharray: 0 100; }
+}
+
+/* ── Floating Action Button Pulse Ring (used on Record CTA) ── */
+.hover-pulse-ring:hover {
+  animation: pulse-ring 1.5s infinite;
+}
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(34, 100, 114, 0.4); }
+  70%  { box-shadow: 0 0 0 10px rgba(34, 100, 114, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 100, 114, 0); }
+}
+
+/* ── Glass Panel (frosted translucent card) ── */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+}
+
+/* ── Glass Card (Pro Dashboard variant) ── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+/* ── Premium Shadow (used on flashcards) ── */
+.premium-shadow {
+  box-shadow:
+    0 20px 40px -10px rgba(34, 100, 114, 0.15),
+    0 10px 20px -5px  rgba(34, 100, 114, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* ── Premium Card Hover (used on BatchesScreen cards) ── */
+.premium-card {
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.premium-card:hover {
+  box-shadow: 0 12px 32px -4px rgba(34, 100, 114, 0.12);
+  transform: translateY(-2px);
+}
+
+/* ── Tonal Card (used on PYQ) ── */
+.tonal-card {
+  background-color: var(--color-surface-container-lowest);
+  border: 1px solid var(--color-outline-variant);
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+.tonal-card:hover {
+  box-shadow: 0 10px 25px -5px rgba(34, 100, 114, 0.1), 0 8px 10px -6px rgba(34, 100, 114, 0.1);
+  border-color: var(--color-primary-fixed-dim);
+  transform: translateY(-2px);
+}
+
+/* ── Tonal Chip Active / Inactive ── */
+.chip-active {
+  background-color: var(--color-secondary-container);
+  color: var(--color-on-secondary-container);
+  border: 1px solid var(--color-secondary-fixed-dim);
+}
+
+.chip-inactive {
+  background-color: var(--color-surface-container-low);
+  color: var(--color-on-surface-variant);
+  border: 1px solid transparent;
+}
+.chip-inactive:hover {
+  background-color: var(--color-surface-container-high);
+}
+
+/* ── Wave Background (PYQ) ── */
+.wave-bg {
+  background-image: repeating-radial-gradient(
+    circle at 0 0,
+    transparent 0,
+    var(--color-surface) 14px,
+    transparent 15px
+  );
+  background-size: 40px 40px;
+  opacity: 0.4;
+}
+
+/* ── Ambient Wave Background (Batches) ── */
+.ambient-wave-bg {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(34, 100, 114, 0.02) 0px,
+    rgba(34, 100, 114, 0.02) 2px,
+    transparent 2px,
+    transparent 10px
+  );
+  background-size: 14px 14px;
+}
+
+/* ── Maritime Background (Study Notes) ── */
+.maritime-bg {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e8f0f3 100%);
+  position: relative;
+}
+.maritime-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.4;
+  background-image: radial-gradient(#93d0e0 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Maritime Card Pattern (MockTests) ── */
+.maritime-bg-pattern {
+  background-image: radial-gradient(circle at 100% 50%, transparent 20%, var(--color-surface-container-low) 21%, var(--color-surface-container-low) 34%, transparent 35%),
+                    radial-gradient(circle at 0% 50%, transparent 20%, var(--color-surface-container-low) 21%, var(--color-surface-container-low) 34%, transparent 35%);
+  background-size: 60px 80px;
+  background-position: 0 0, 30px 40px;
+}
+
+/* ── Circular Chart (Progress Dashboard) ── */
+.circular-chart {
+  display: block;
+  margin: 0 auto;
+  max-width: 80%;
+  max-height: 250px;
+}
+.circle-bg {
+  fill: none;
+  stroke: var(--color-surface-container);
+  stroke-width: 3.8;
+}
+.circle {
+  fill: none;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  animation: progress 1s ease-out forwards;
+}
+
+/* ── 3D Flashcard Helpers ── */
+.perspective-1000 {
+  perspective: 1000px;
+}
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+.flashcard-inner {
+  transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.flashcard-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+/* ── Pro Pulse Button (Batches CTA) ── */
+.btn-pro-pulse {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+.btn-pro-pulse::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.6s ease-out;
+  border-radius: 50%;
+  z-index: -1;
+}
+.btn-pro-pulse:hover::before {
+  transform: translate(-50%, -50%) scale(1);
+  animation: pulse-slow 2s infinite;
+}
+
+/* ── Horizontal Scrollbar Hide ── */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ── Safe Area Padding (modern phones) ── */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .pb-safe {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
+  }
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* ── Material Symbols Filled Variants ── */
+.material-symbols-filled {
+  font-variation-settings: 'FILL' 1;
+}
