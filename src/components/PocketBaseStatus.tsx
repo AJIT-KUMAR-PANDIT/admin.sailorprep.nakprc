@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { pb, POCKETBASE_URL } from '../lib/pb';
+import { pb } from '../lib/pb';
 
 export default function PocketBaseStatus() {
   const [isConnected, setIsConnected] = useState<boolean | null>(null);
