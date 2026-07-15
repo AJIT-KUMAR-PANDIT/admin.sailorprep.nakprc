@@ -51,8 +51,8 @@ async function main() {
       schema: [
         { name: "title", type: "text", required: true },
         { name: "type", type: "text", required: true },
-        { name: "capacity", type: "number", required: true },
-        { name: "enrolled", type: "number", required: true },
+        { name: "capacity", type: "number", required: false },
+        { name: "enrolled", type: "number", required: false },
         { name: "status", type: "text", required: true },
         { name: "start_date", type: "date", required: true },
         { name: "category", type: "text", required: false },
@@ -79,8 +79,8 @@ async function main() {
       type: "base",
       schema: [
         { name: "title", type: "text", required: true },
-        { name: "duration_mins", type: "number", required: true },
-        { name: "total_questions", type: "number", required: true },
+        { name: "duration_mins", type: "number", required: false },
+        { name: "total_questions", type: "number", required: false },
         { name: "difficulty", type: "text", required: true },
         { name: "category", type: "text", required: true },
         { name: "is_pro", type: "bool", required: false },
@@ -112,16 +112,17 @@ async function main() {
         { name: "downloads", type: "number", required: false },
         { name: "status", type: "text", required: false },
         { name: "title", type: "text", required: false },
-        { name: "pdf_url", type: "text", required: false }
+        { name: "pdf_url", type: "text", required: false },
+        { name: "pdf_file", type: "file", required: false, options: { maxSelect: 1, maxSize: 5242880, mimeTypes: ["application/pdf"] } }
       ]
     },
     {
       name: "user_progress",
       type: "base",
       schema: [
-        { name: "current_level", type: "number", required: true },
-        { name: "total_score", type: "number", required: true },
-        { name: "streak_days", type: "number", required: true }
+        { name: "current_level", type: "number", required: false },
+        { name: "total_score", type: "number", required: false },
+        { name: "streak_days", type: "number", required: false }
       ]
     }
   ];

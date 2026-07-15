@@ -16,6 +16,7 @@ export default function PyqsAdmin() {
   const [status, setStatus] = useState('Verified');
   const [title, setTitle] = useState('');
   const [pdfUrl, setPdfUrl] = useState('');
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
 
   const fetchPyqs = async () => {
     setLoading(true);
@@ -36,19 +37,24 @@ export default function PyqsAdmin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await pb.collection('pyqs').create({
-        year,
-        exam_type: examType,
-        subject,
-        difficulty,
-        downloads: Number(downloads),
-        status,
-        title,
-        pdf_url: pdfUrl
-      });
+      const formData = new FormData();
+      formData.append('year', year);
+      formData.append('exam_type', examType);
+      formData.append('subject', subject);
+      formData.append('difficulty', difficulty);
+      formData.append('downloads', downloads.toString());
+      formData.append('status', status);
+      formData.append('title', title);
+      formData.append('pdf_url', pdfUrl);
+      if (pdfFile) {
+        formData.append('pdf_file', pdfFile);
+      }
+
+      await pb.collection('pyqs').create(formData);
       fetchPyqs();
       setTitle('');
       setPdfUrl('');
+      setPdfFile(null);
       setSubject('');
     } catch (error) {
       console.error("Error creating PYQ:", error);
@@ -106,7 +112,12 @@ export default function PyqsAdmin() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">PDF URL</label>
+              <label className="block text-sm font-medium mb-1">PDF File (Upload)</label>
+              <input type="file" accept="application/pdf" onChange={e => setPdfFile(e.target.files?.[0] || null)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2 text-sm text-[var(--color-on-surface-variant)] file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--color-primary)]/10 file:text-[var(--color-primary)] hover:file:bg-[var(--color-primary)]/20" />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Or PDF URL (External Link)</label>
               <input type="text" value={pdfUrl} onChange={e => setPdfUrl(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2" placeholder="e.g. https://example.com/file.pdf" />
             </div>
 
