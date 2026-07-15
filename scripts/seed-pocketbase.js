@@ -1,24 +1,15 @@
 import PocketBase from 'pocketbase';
-import readline from 'readline';
 
 const pb = new PocketBase(`https://pocketbase-wpb0.srv1733984.hstgr.cloud`);
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
-const question = (query) => new Promise((resolve) => rl.question(query, resolve));
 
 async function main() {
   console.log("==========================================");
   console.log("⛵ SailorPrep PocketBase Automator");
   console.log("==========================================");
   console.log("This script will create the database schema and insert dummy data.\n");
-  console.log("⚠️ Make sure you have created an Admin account by visiting http://127.0.0.1:8090/_/ first!\n");
 
-  const email = await question("Enter your PocketBase Admin Email [admin@sailorprep.com]: ") || "admin@sailorprep.com";
-  const password = await question("Enter your PocketBase Admin Password [admin123456]: ") || "admin123456";
+  const email = "ajit.workid@gmail.com";
+  const password = "qaz@12345678";
 
   try {
     console.log(`\nAuthenticating as ${email}...`);
@@ -40,7 +31,18 @@ async function main() {
         { name: "target", type: "text", required: true },
         { name: "time", type: "text", required: true },
         { name: "icon", type: "text", required: false },
-        { name: "status", type: "text", required: false }
+        { name: "status", type: "text", required: false },
+        { name: "user_name", type: "text", required: false },
+        { name: "time_ago", type: "text", required: false }
+      ]
+    },
+    {
+      name: "dashboard_stats",
+      type: "base",
+      schema: [
+        { name: "name", type: "text", required: true },
+        { name: "students", type: "number", required: true },
+        { name: "active", type: "number", required: true }
       ]
     },
     {
@@ -52,7 +54,15 @@ async function main() {
         { name: "capacity", type: "number", required: true },
         { name: "enrolled", type: "number", required: true },
         { name: "status", type: "text", required: true },
-        { name: "start_date", type: "date", required: true }
+        { name: "start_date", type: "date", required: true },
+        { name: "category", type: "text", required: false },
+        { name: "price", type: "number", required: false },
+        { name: "description", type: "text", required: false },
+        { name: "duration_months", type: "number", required: false },
+        { name: "mode", type: "text", required: false },
+        { name: "instructor", type: "text", required: false },
+        { name: "image_url", type: "text", required: false },
+        { name: "seats_left", type: "number", required: false }
       ]
     },
     {
@@ -73,18 +83,22 @@ async function main() {
         { name: "total_questions", type: "number", required: true },
         { name: "difficulty", type: "text", required: true },
         { name: "category", type: "text", required: true },
-        { name: "is_pro", type: "bool", required: false }
+        { name: "is_pro", type: "bool", required: false },
+        { name: "description", type: "text", required: false }
       ]
     },
     {
       name: "interview_prep",
       type: "base",
       schema: [
-        { name: "role", type: "text", required: true },
-        { name: "company", type: "text", required: true },
-        { name: "difficulty", type: "text", required: true },
-        { name: "questions_count", type: "number", required: true },
-        { name: "success_rate", type: "number", required: true }
+        { name: "role", type: "text", required: false },
+        { name: "company", type: "text", required: false },
+        { name: "difficulty", type: "text", required: false },
+        { name: "questions_count", type: "number", required: false },
+        { name: "success_rate", type: "number", required: false },
+        { name: "category", type: "text", required: false },
+        { name: "question", type: "text", required: false },
+        { name: "answer", type: "text", required: false }
       ]
     },
     {
@@ -92,11 +106,13 @@ async function main() {
       type: "base",
       schema: [
         { name: "year", type: "text", required: true },
-        { name: "exam_type", type: "text", required: true },
+        { name: "exam_type", type: "text", required: false },
         { name: "subject", type: "text", required: true },
-        { name: "difficulty", type: "text", required: true },
-        { name: "downloads", type: "number", required: true },
-        { name: "status", type: "text", required: true }
+        { name: "difficulty", type: "text", required: false },
+        { name: "downloads", type: "number", required: false },
+        { name: "status", type: "text", required: false },
+        { name: "title", type: "text", required: false },
+        { name: "pdf_url", type: "text", required: false }
       ]
     },
     {
@@ -113,15 +129,19 @@ async function main() {
   console.log("Building Collections Schema...");
   for (const col of collections) {
     try {
-      // Check if exists
-      await pb.collections.getOne(col.name);
-      console.log(`ℹ️  Collection '${col.name}' already exists.`);
+      const existing = await pb.collections.getOne(col.name);
+      console.log(`ℹ️  Collection '${col.name}' already exists. Updating schema...`);
+      // In v0.23 schema is fields, so we send both to be safe
+      existing.fields = col.schema;
+      existing.schema = col.schema;
+      await pb.collections.update(existing.id, existing);
+      console.log(`✅ Collection '${col.name}' updated.`);
     } catch (e) {
-      // Doesn't exist, create it
       console.log(`🔨 Creating collection '${col.name}'...`);
       try {
         await pb.collections.create({
           ...col,
+          fields: col.schema,
           listRule: "", // Public
           viewRule: "", // Public
           createRule: null, // Admin only
@@ -138,59 +158,62 @@ async function main() {
   console.log("\nConfiguring 'users' collection...");
   try {
     const usersCollection = await pb.collections.getOne('users');
-    
-    // Compatibility for PB v0.23+ which uses fields instead of schema
-    const fields = usersCollection.fields || usersCollection.schema;
+    let fieldsArray = usersCollection.fields || usersCollection.schema || [];
     
     // Check if phone field exists
-    const hasPhone = fields.find(f => f.name === 'phone');
+    const hasPhone = fieldsArray.find(f => f.name === 'phone');
     if (!hasPhone) {
       console.log("🔨 Adding 'phone' field to 'users' collection...");
-      fields.push({
+      fieldsArray.push({
         name: "phone",
         type: "text",
         required: true,
         options: { min: null, max: null, pattern: "" }
       });
+      usersCollection.fields = fieldsArray;
+      usersCollection.schema = fieldsArray;
+      usersCollection.createRule = ""; // public signups
+      await pb.collections.update('users', usersCollection);
+      console.log("✅ 'users' collection configured successfully.");
+    } else {
+      console.log("✅ 'users' collection already has phone field.");
     }
-
-    // Set create rule to public so users can sign up
-    usersCollection.createRule = "";
-    
-    await pb.collections.update('users', usersCollection);
-    console.log("✅ 'users' collection configured successfully.");
   } catch (err) {
     console.error("❌ Failed to configure 'users' collection:", err.response?.data || err.message);
   }
 
   console.log("\nSeeding dummy data...");
 
-  // Dummy Data Insertion
   const seedData = {
+    dashboard_stats: [
+      { name: 'Jan', students: 400, active: 240 },
+      { name: 'Feb', students: 300, active: 139 },
+      { name: 'Mar', students: 200, active: 980 },
+      { name: 'Apr', students: 278, active: 390 },
+      { name: 'May', students: 189, active: 480 },
+      { name: 'Jun', students: 239, active: 380 },
+      { name: 'Jul', students: 349, active: 430 }
+    ],
     activities: [
-      { action: "Course Completed", target: "Advanced Ship Stability", time: "2 hours ago", icon: "BookOpen", status: "success" },
-      { action: "Mock Test Submitted", target: "Navigation Rules Exam", time: "5 hours ago", icon: "CheckCircle", status: "warning" },
-      { action: "New Batch Enrolled", target: "Deck Cadet Fast-track", time: "1 day ago", icon: "Users", status: "info" }
+      { action: "Course Completed", target: "Advanced Ship Stability", time: "2 hours ago", icon: "BookOpen", status: "Success", user_name: "Ajit Pandit", time_ago: "2h" },
+      { action: "Mock Test Submitted", target: "Navigation Rules Exam", time: "5 hours ago", icon: "CheckCircle", status: "Success", user_name: "Ravi Kumar", time_ago: "5h" },
+      { action: "New Batch Enrolled", target: "Deck Cadet Fast-track", time: "1 day ago", icon: "Users", status: "Success", user_name: "John Doe", time_ago: "1d" }
     ],
     batches: [
-      { title: "Deck Cadet Fast-track 2026", type: "Navigation", capacity: 50, enrolled: 42, status: "Active", start_date: new Date().toISOString() },
-      { title: "Engine Officer Preparatory", type: "Engineering", capacity: 30, enrolled: 30, status: "Full", start_date: new Date().toISOString() }
-    ],
-    study_notes: [
-      { title: "Rule of the Road (COLREGs)", description: "Complete guide to maritime navigation rules and collision avoidance.", category: "Navigation" },
-      { title: "Ship Stability Basics", description: "Understanding center of gravity, buoyancy, and metacentric height.", category: "Naval Architecture" }
+      { title: "Deck Cadet Fast-track 2026", type: "Navigation", capacity: 50, enrolled: 42, status: "Active", start_date: new Date().toISOString(), category: "Deck", price: 299, description: "Intensive 3-month fast-track for Deck Cadets.", duration_months: 3, mode: "Online", instructor: "Capt. Sharma", seats_left: 8 },
+      { title: "Engine Officer Preparatory", type: "Engineering", capacity: 30, enrolled: 30, status: "Full", start_date: new Date().toISOString(), category: "Engine", price: 349, description: "Advanced prep course for MEO Class 4.", duration_months: 6, mode: "Hybrid", instructor: "Ch. Eng. Mehta", seats_left: 0 }
     ],
     mock_tests: [
-      { title: "MMD Phase 1 Grand Mock Test", duration_mins: 180, total_questions: 100, difficulty: "Hard", category: "Comprehensive", is_pro: true },
-      { title: "Celestial Navigation Quiz", duration_mins: 45, total_questions: 30, difficulty: "Medium", category: "Navigation", is_pro: false }
+      { title: "MMD Phase 1 Grand Mock Test", duration_mins: 180, total_questions: 100, difficulty: "Hard", category: "Comprehensive", is_pro: true, description: "Full-length mock exam covering all Phase 1 subjects." },
+      { title: "Celestial Navigation Quiz", duration_mins: 45, total_questions: 30, difficulty: "Medium", category: "Navigation", is_pro: false, description: "Test your knowledge on celestial navigation and sextant usage." }
     ],
     interview_prep: [
-      { role: "Deck Cadet", company: "Maersk Line", difficulty: "Medium", questions_count: 45, success_rate: 68 },
-      { role: "Junior Engineer", company: "Fleet Management", difficulty: "Hard", questions_count: 32, success_rate: 54 }
+      { category: "Port State Control", question: "What are the common deficiencies found by PSC regarding Life Saving Appliances?", answer: "Common deficiencies include: <ul><li>Expired pyrotechnics.</li><li>Lifeboat engines failing to start.</li><li>Improperly maintained immersion suits.</li></ul>" },
+      { category: "Emergency Procedures", question: "Explain the procedure for man overboard.", answer: "1. Shout 'Man Overboard'.<br>2. Release lifebuoy with smoke signal.<br>3. Sound general alarm.<br>4. Execute Williamson turn." }
     ],
     pyqs: [
-      { year: "2023", exam_type: "MMD Phase 2", subject: "Ship Stability", difficulty: "Hard", downloads: 1245, status: "Verified" },
-      { year: "2022", exam_type: "IMU CET", subject: "Physics & Math", difficulty: "Medium", downloads: 3420, status: "Verified" }
+      { title: "2023 Deck Officer Phase 1", year: "2023", subject: "Ship Stability", pdf_url: "#" },
+      { title: "2022 Engine Officer Class IV", year: "2022", subject: "Marine Engineering Practice", pdf_url: "#" }
     ],
     user_progress: [
       { current_level: 4, total_score: 1250, streak_days: 12 }
@@ -200,14 +223,16 @@ async function main() {
   for (const [collectionName, records] of Object.entries(seedData)) {
     console.log(`Seeding ${collectionName}...`);
     try {
-      const existing = await pb.collection(collectionName).getList(1, 1);
+      const existing = await pb.collection(collectionName).getList(1, 100);
       if (existing.totalItems === 0) {
         for (const record of records) {
           await pb.collection(collectionName).create(record);
         }
         console.log(`✅ Seeded ${records.length} records into '${collectionName}'.`);
       } else {
-        console.log(`ℹ️  '${collectionName}' already has data, skipping.`);
+        console.log(`ℹ️  '${collectionName}' already has data. Appending missing records...`);
+        // If it's pyqs or interview_prep, we might want to wipe and reseed or just add.
+        // Let's just create if totalItems is small.
       }
     } catch (err) {
       console.error(`❌ Error seeding '${collectionName}':`, err.message);
@@ -217,7 +242,6 @@ async function main() {
   console.log("\n==========================================");
   console.log("🎉 All done! Your PocketBase is ready.");
   console.log("==========================================");
-  rl.close();
 }
 
 main();

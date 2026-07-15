@@ -15,16 +15,6 @@ import PocketBaseStatus from '../components/PocketBaseStatus';
 import { useEffect, useState } from 'react';
 import { pb } from '../lib/pb';
 
-const data = [
-  { name: 'Jan', students: 400, active: 240 },
-  { name: 'Feb', students: 300, active: 139 },
-  { name: 'Mar', students: 200, active: 980 },
-  { name: 'Apr', students: 278, active: 390 },
-  { name: 'May', students: 189, active: 480 },
-  { name: 'Jun', students: 239, active: 380 },
-  { name: 'Jul', students: 349, active: 430 },
-];
-
 const StatCard = ({ title, value, icon: Icon, trend, trendUp }: any) => (
   <div className="glass-card premium-card p-6 rounded-2xl flex flex-col gap-4">
     <div className="flex justify-between items-start">
@@ -46,21 +36,27 @@ const StatCard = ({ title, value, icon: Icon, trend, trendUp }: any) => (
 const DashboardScreen = () => {
   const [activities, setActivities] = useState<any[]>([]);
   const [loadingActivities, setLoadingActivities] = useState(true);
+  const [chartData, setChartData] = useState<any[]>([]);
+  const [totalUsers, setTotalUsers] = useState(0);
 
   useEffect(() => {
-    async function fetchActivities() {
+    async function fetchData() {
       try {
-        const records = await pb.collection('activities').getList(1, 5, {
-          sort: '-created',
-        });
-        setActivities(records.items);
+        const [activitiesRes, statsRes, usersRes] = await Promise.all([
+          pb.collection('activities').getList(1, 5, { sort: '-created' }),
+          pb.collection('dashboard_stats').getFullList({ sort: '+created' }),
+          pb.collection('users').getList(1, 1)
+        ]);
+        setActivities(activitiesRes.items);
+        setChartData(statsRes.length > 0 ? statsRes : []);
+        setTotalUsers(usersRes.totalItems);
       } catch (error) {
-        console.error("Error fetching activities:", error);
+        console.error("Error fetching dashboard data:", error);
       } finally {
         setLoadingActivities(false);
       }
     }
-    fetchActivities();
+    fetchData();
   }, []);
 
   return (
@@ -80,7 +76,7 @@ const DashboardScreen = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="Total Students" value="2,845" icon={Users} trend="+12.5%" trendUp={true} />
+        <StatCard title="Total Students" value={totalUsers.toLocaleString()} icon={Users} trend="+12.5%" trendUp={true} />
         <StatCard title="Active Sessions" value="1,294" icon={Activity} trend="+5.2%" trendUp={true} />
         <StatCard title="Mock Tests Taken" value="842" icon={FileText} trend="-2.1%" trendUp={false} />
         <StatCard title="Study Materials" value="156" icon={BookOpen} trend="+8.4%" trendUp={true} />
@@ -92,7 +88,7 @@ const DashboardScreen = () => {
           <h2 className="text-xl font-bold text-[var(--color-on-surface)] mb-6" style={{ fontFamily: 'var(--font-headline-md)' }}>Student Growth</h2>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+              <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorStudents" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.8}/>
@@ -154,7 +150,7 @@ const DashboardScreen = () => {
         <h2 className="text-xl font-bold text-[var(--color-on-surface)] mb-6" style={{ fontFamily: 'var(--font-headline-md)' }}>Content Performance</h2>
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <BarChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--color-outline-variant)" vertical={false} />
               <XAxis dataKey="name" stroke="var(--color-outline)" />
               <YAxis stroke="var(--color-outline)" />

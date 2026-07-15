@@ -14,6 +14,12 @@ export default function BatchesAdmin() {
   const [enrolled, setEnrolled] = useState(0);
   const [status, setStatus] = useState('Active');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [category, setCategory] = useState('Deck');
+  const [price, setPrice] = useState(299);
+  const [description, setDescription] = useState('');
+  const [durationMonths, setDurationMonths] = useState(3);
+  const [mode, setMode] = useState('Online');
+  const [instructor, setInstructor] = useState('');
 
   const fetchBatches = async () => {
     setLoading(true);
@@ -41,6 +47,13 @@ export default function BatchesAdmin() {
         enrolled: Number(enrolled),
         status,
         start_date: new Date(startDate).toISOString(),
+        category,
+        price: Number(price),
+        description,
+        duration_months: Number(durationMonths),
+        mode,
+        instructor,
+        seats_left: Number(capacity) - Number(enrolled),
       });
       fetchBatches();
       setTitle('');
@@ -107,6 +120,38 @@ export default function BatchesAdmin() {
                 <option value="Full">Full</option>
                 <option value="Upcoming">Upcoming</option>
               </select>
+            </div>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium mb-1">Category</label>
+                <input type="text" required value={category} onChange={e => setCategory(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2" />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium mb-1">Price ($)</label>
+                <input type="number" required value={price} onChange={e => setPrice(Number(e.target.value))} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Description</label>
+              <textarea required value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2" rows={2} />
+            </div>
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium mb-1">Duration (Months)</label>
+                <input type="number" required value={durationMonths} onChange={e => setDurationMonths(Number(e.target.value))} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2" />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium mb-1">Mode</label>
+                <select value={mode} onChange={e => setMode(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2">
+                  <option value="Online">Online</option>
+                  <option value="Offline">Offline</option>
+                  <option value="Hybrid">Hybrid</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Instructor Name</label>
+              <input type="text" required value={instructor} onChange={e => setInstructor(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2" />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Start Date</label>

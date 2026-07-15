@@ -14,6 +14,8 @@ export default function PyqsAdmin() {
   const [difficulty, setDifficulty] = useState('Medium');
   const [downloads, setDownloads] = useState(0);
   const [status, setStatus] = useState('Verified');
+  const [title, setTitle] = useState('');
+  const [pdfUrl, setPdfUrl] = useState('');
 
   const fetchPyqs = async () => {
     setLoading(true);
@@ -40,9 +42,13 @@ export default function PyqsAdmin() {
         subject,
         difficulty,
         downloads: Number(downloads),
-        status
+        status,
+        title,
+        pdf_url: pdfUrl
       });
       fetchPyqs();
+      setTitle('');
+      setPdfUrl('');
       setSubject('');
     } catch (error) {
       console.error("Error creating PYQ:", error);
@@ -78,6 +84,11 @@ export default function PyqsAdmin() {
             <Plus size={20} className="text-purple-500" /> Create New PYQ
           </h2>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Title</label>
+              <input type="text" required value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2" placeholder="e.g. 2023 Deck Officer Phase 1" />
+            </div>
+
             <div className="flex gap-4">
               <div className="flex-1">
                 <label className="block text-sm font-medium mb-1">Year</label>
@@ -92,6 +103,11 @@ export default function PyqsAdmin() {
             <div>
               <label className="block text-sm font-medium mb-1">Subject</label>
               <input type="text" required value={subject} onChange={e => setSubject(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2" placeholder="e.g. Ship Stability" />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">PDF URL</label>
+              <input type="text" value={pdfUrl} onChange={e => setPdfUrl(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2" placeholder="e.g. https://example.com/file.pdf" />
             </div>
 
             <div className="flex gap-4">

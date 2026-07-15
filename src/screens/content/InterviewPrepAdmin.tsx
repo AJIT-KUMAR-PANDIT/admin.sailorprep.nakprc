@@ -13,6 +13,9 @@ export default function InterviewPrepAdmin() {
   const [difficulty, setDifficulty] = useState('Medium');
   const [questionsCount, setQuestionsCount] = useState(10);
   const [successRate, setSuccessRate] = useState(50);
+  const [category, setCategory] = useState('Port State Control');
+  const [question, setQuestion] = useState('');
+  const [answer, setAnswer] = useState('');
 
   const fetchPreps = async () => {
     setLoading(true);
@@ -38,11 +41,14 @@ export default function InterviewPrepAdmin() {
         company,
         difficulty,
         questions_count: Number(questionsCount),
-        success_rate: Number(successRate)
+        success_rate: Number(successRate),
+        category,
+        question,
+        answer
       });
       fetchPreps();
-      setRole('');
-      setCompany('');
+      setQuestion('');
+      setAnswer('');
     } catch (error) {
       console.error("Error creating prep:", error);
       alert("Failed to create interview prep.");
@@ -98,13 +104,29 @@ export default function InterviewPrepAdmin() {
               </div>
             </div>
 
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium mb-1">Difficulty</label>
+                <select value={difficulty} onChange={e => setDifficulty(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2">
+                  <option value="Easy">Easy</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Hard">Hard</option>
+                </select>
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium mb-1">Category</label>
+                <input type="text" required value={category} onChange={e => setCategory(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2" placeholder="e.g. Emergencies" />
+              </div>
+            </div>
+
             <div>
-              <label className="block text-sm font-medium mb-1">Difficulty</label>
-              <select value={difficulty} onChange={e => setDifficulty(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2">
-                <option value="Easy">Easy</option>
-                <option value="Medium">Medium</option>
-                <option value="Hard">Hard</option>
-              </select>
+              <label className="block text-sm font-medium mb-1">Question</label>
+              <textarea required value={question} onChange={e => setQuestion(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2" rows={2} />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Answer (HTML allowed)</label>
+              <textarea required value={answer} onChange={e => setAnswer(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2" rows={3} />
             </div>
             
             <button type="submit" className="mt-2 bg-blue-500 text-white rounded-xl py-3 font-bold hover:bg-blue-600 transition-colors shadow-md">
