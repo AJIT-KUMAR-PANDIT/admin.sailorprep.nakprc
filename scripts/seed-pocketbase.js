@@ -135,6 +135,31 @@ async function main() {
     }
   }
 
+  console.log("\nConfiguring 'users' collection...");
+  try {
+    const usersCollection = await pb.collections.getOne('users');
+    
+    // Check if phone field exists
+    const hasPhone = usersCollection.schema.find(f => f.name === 'phone');
+    if (!hasPhone) {
+      console.log("🔨 Adding 'phone' field to 'users' collection...");
+      usersCollection.schema.push({
+        name: "phone",
+        type: "text",
+        required: true,
+        options: { min: null, max: null, pattern: "" }
+      });
+    }
+
+    // Set create rule to public so users can sign up
+    usersCollection.createRule = "";
+    
+    await pb.collections.update('users', usersCollection);
+    console.log("✅ 'users' collection configured successfully.");
+  } catch (err) {
+    console.error("❌ Failed to configure 'users' collection:", err.response?.data || err.message);
+  }
+
   console.log("\nSeeding dummy data...");
 
   // Dummy Data Insertion

@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Users, BookOpen, Settings, LogOut, Ship } from 'lucide-react';
+import { pb } from '../lib/pb';
 
 const Sidebar = () => {
   const navItems = [
@@ -40,7 +41,10 @@ const Sidebar = () => {
       </div>
 
       <div className="p-4 border-t border-[var(--color-outline-variant)]">
-        <button className="flex items-center gap-3 px-4 py-3 w-full text-[var(--color-error)] hover:bg-[var(--color-error-container)] hover:text-[var(--color-on-error-container)] rounded-xl transition-all font-medium cursor-pointer">
+        <button 
+          onClick={() => pb.authStore.clear()}
+          className="flex items-center gap-3 px-4 py-3 w-full text-[var(--color-error)] hover:bg-[var(--color-error-container)] hover:text-[var(--color-on-error-container)] rounded-xl transition-all font-medium cursor-pointer"
+        >
           <LogOut size={20} />
           <span>Logout</span>
         </button>
