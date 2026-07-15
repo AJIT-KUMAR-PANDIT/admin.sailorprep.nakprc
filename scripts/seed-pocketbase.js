@@ -139,11 +139,14 @@ async function main() {
   try {
     const usersCollection = await pb.collections.getOne('users');
     
+    // Compatibility for PB v0.23+ which uses fields instead of schema
+    const fields = usersCollection.fields || usersCollection.schema;
+    
     // Check if phone field exists
-    const hasPhone = usersCollection.schema.find(f => f.name === 'phone');
+    const hasPhone = fields.find(f => f.name === 'phone');
     if (!hasPhone) {
       console.log("🔨 Adding 'phone' field to 'users' collection...");
-      usersCollection.schema.push({
+      fields.push({
         name: "phone",
         type: "text",
         required: true,
