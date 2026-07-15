@@ -135,8 +135,15 @@ async function main() {
       const existing = await pb.collections.getOne(col.name);
       console.log(`ℹ️  Collection '${col.name}' already exists. Updating schema...`);
       // In v0.23 schema is fields, so we send both to be safe
-      existing.fields = col.schema;
-      existing.schema = col.schema;
+      // Preserve created and updated fields if they exist
+      const existingCreated = existing.fields.find(f => f.name === 'created');
+      const existingUpdated = existing.fields.find(f => f.name === 'updated');
+      let newFields = [...col.schema];
+      if (existingCreated && !newFields.some(f => f.name === 'created')) newFields.push(existingCreated);
+      if (existingUpdated && !newFields.some(f => f.name === 'updated')) newFields.push(existingUpdated);
+      
+      existing.fields = newFields;
+      existing.schema = newFields;
       await pb.collections.update(existing.id, existing);
       console.log(`✅ Collection '${col.name}' updated.`);
     } catch (e) {
@@ -215,8 +222,8 @@ async function main() {
       { category: "Emergency Procedures", question: "Explain the procedure for man overboard.", answer: "1. Shout 'Man Overboard'.<br>2. Release lifebuoy with smoke signal.<br>3. Sound general alarm.<br>4. Execute Williamson turn." }
     ],
     pyqs: [
-      { title: "2023 Deck Officer Phase 1", year: "2023", subject: "Ship Stability", pdf_url: "#" },
-      { title: "2022 Engine Officer Class IV", year: "2022", subject: "Marine Engineering Practice", pdf_url: "#" }
+      { title: '2023 Deck Officer Phase 1', year: '2023', exam_type: 'MMD Phase 1', subject: 'Ship Stability', difficulty: 'Medium', status: 'Verified', downloads: 142, pdf_url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
+      { title: '2022 Engine Officer Class IV', year: '2022', exam_type: 'MEO Class 4', subject: 'Marine Engineering Practice', difficulty: 'Hard', status: 'Verified', downloads: 89, pdf_url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' }
     ],
     user_progress: [
       { current_level: 4, total_score: 1250, streak_days: 12 }
