@@ -1,7 +1,7 @@
 import PocketBase from 'pocketbase';
 import readline from 'readline';
 
-const pb = new PocketBase(`${import.meta.env.VITE_POCKETBASE_URL}`);
+const pb = new PocketBase(`https://pocketbase-wpb0.srv1733984.hstgr.cloud`);
 
 const rl = readline.createInterface({
   input: process.stdin,
