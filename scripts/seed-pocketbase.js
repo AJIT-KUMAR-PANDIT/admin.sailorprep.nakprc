@@ -69,9 +69,11 @@ async function main() {
       name: "study_notes",
       type: "base",
       schema: [
-        { name: "title", type: "text", required: true },
-        { name: "description", type: "text", required: true },
-        { name: "category", type: "text", required: true }
+        { name: "title", type: "text", required: false },
+        { name: "description", type: "text", required: false },
+        { name: "category", type: "text", required: false },
+        { name: "content", type: "text", required: false },
+        { name: "answer", type: "text", required: false }
       ]
     },
     {

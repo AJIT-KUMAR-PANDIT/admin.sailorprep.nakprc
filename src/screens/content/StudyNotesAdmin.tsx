@@ -11,6 +11,8 @@ export default function StudyNotesAdmin() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('Navigation');
+  const [content, setContent] = useState('');
+  const [answer, setAnswer] = useState('');
 
   const fetchNotes = async () => {
     setLoading(true);
@@ -35,10 +37,14 @@ export default function StudyNotesAdmin() {
         title,
         description,
         category,
+        content,
+        answer
       });
       fetchNotes();
       setTitle('');
       setDescription('');
+      setContent('');
+      setAnswer('');
     } catch (error) {
       console.error("Error creating note:", error);
       alert("Failed to create study note.");
@@ -87,12 +93,22 @@ export default function StudyNotesAdmin() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Description / Content</label>
-              <textarea required value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2 h-32" placeholder="Note content goes here..." />
+              <label className="block text-sm font-medium mb-1">Description (Optional)</label>
+              <textarea value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2 min-h-[60px]" placeholder="Brief description of the note" />
             </div>
-            
-            <button type="submit" className="mt-2 bg-[var(--color-secondary)] text-white rounded-xl py-3 font-bold hover:bg-[var(--color-secondary)]/90 transition-colors shadow-md">
-              Create Note
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Flashcard Question (Content)</label>
+              <textarea required value={content} onChange={e => setContent(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2 min-h-[100px]" placeholder="e.g. What is the procedure for launching a lifeboat?" />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Flashcard Answer</label>
+              <textarea required value={answer} onChange={e => setAnswer(e.target.value)} className="w-full bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl px-4 py-2 min-h-[100px]" placeholder="e.g. 1. Muster crew 2. Remove securing arrangements..." />
+            </div>
+
+            <button type="submit" disabled={loading} className="w-full bg-[var(--color-primary)] text-[var(--color-on-primary)] font-bold py-3 rounded-xl hover:opacity-90 transition-opacity mt-2">
+              {loading ? 'Creating...' : 'Create Study Note'}
             </button>
           </form>
         </div>
