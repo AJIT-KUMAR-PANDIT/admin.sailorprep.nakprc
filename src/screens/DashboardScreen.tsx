@@ -11,6 +11,9 @@ import {
   Bar,
   Legend
 } from 'recharts';
+import PocketBaseStatus from '../components/PocketBaseStatus';
+import { useEffect, useState } from 'react';
+import { pb } from '../lib/pb';
 
 const data = [
   { name: 'Jan', students: 400, active: 240 },
@@ -20,13 +23,6 @@ const data = [
   { name: 'May', students: 189, active: 480 },
   { name: 'Jun', students: 239, active: 380 },
   { name: 'Jul', students: 349, active: 430 },
-];
-
-const activityData = [
-  { name: 'Alex Johnson', action: 'Completed Mock Test 4', time: '10 mins ago', status: 'Success' },
-  { name: 'Maria Garcia', action: 'Downloaded PYQ - 2023', time: '1 hour ago', status: 'Success' },
-  { name: 'Sam Smith', action: 'Failed Login Attempt', time: '2 hours ago', status: 'Failed' },
-  { name: 'John Doe', action: 'Started Interview Prep', time: '3 hours ago', status: 'Pending' },
 ];
 
 const StatCard = ({ title, value, icon: Icon, trend, trendUp }: any) => (
@@ -48,6 +44,25 @@ const StatCard = ({ title, value, icon: Icon, trend, trendUp }: any) => (
 );
 
 const DashboardScreen = () => {
+  const [activities, setActivities] = useState<any[]>([]);
+  const [loadingActivities, setLoadingActivities] = useState(true);
+
+  useEffect(() => {
+    async function fetchActivities() {
+      try {
+        const records = await pb.collection('activities').getList(1, 5, {
+          sort: '-created',
+        });
+        setActivities(records.items);
+      } catch (error) {
+        console.error("Error fetching activities:", error);
+      } finally {
+        setLoadingActivities(false);
+      }
+    }
+    fetchActivities();
+  }, []);
+
   return (
     <div className="space-y-6 animate-fade-in-up">
       <div className="flex justify-between items-center mb-8">
@@ -60,6 +75,8 @@ const DashboardScreen = () => {
           <span>Generate Report</span>
         </button>
       </div>
+
+      <PocketBaseStatus />
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -109,19 +126,25 @@ const DashboardScreen = () => {
           </div>
           
           <div className="flex-1 overflow-y-auto pr-2 space-y-4">
-            {activityData.map((activity, index) => (
-              <div key={index} className="flex items-start gap-4 p-3 rounded-xl hover:bg-[var(--color-surface-container)] transition-colors">
-                <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
-                  activity.status === 'Success' ? 'bg-[#16a34a]' : 
-                  activity.status === 'Failed' ? 'bg-[var(--color-error)]' : 'bg-[#eab308]'
-                }`}></div>
-                <div className="flex-1">
-                  <p className="text-[var(--color-on-surface)] font-medium text-sm">{activity.action}</p>
-                  <p className="text-[var(--color-on-surface-variant)] text-xs mt-1">{activity.name}</p>
+            {loadingActivities ? (
+              <div className="text-center text-sm text-[var(--color-on-surface-variant)] py-4">Loading activities...</div>
+            ) : activities.length > 0 ? (
+              activities.map((activity, index) => (
+                <div key={index} className="flex items-start gap-4 p-3 rounded-xl hover:bg-[var(--color-surface-container)] transition-colors">
+                  <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
+                    activity.status === 'Success' ? 'bg-[#16a34a]' : 
+                    activity.status === 'Failed' ? 'bg-[var(--color-error)]' : 'bg-[#eab308]'
+                  }`}></div>
+                  <div className="flex-1">
+                    <p className="text-[var(--color-on-surface)] font-medium text-sm">{activity.action}</p>
+                    <p className="text-[var(--color-on-surface-variant)] text-xs mt-1">{activity.user_name}</p>
+                  </div>
+                  <span className="text-[var(--color-outline)] text-xs">{activity.time_ago}</span>
                 </div>
-                <span className="text-[var(--color-outline)] text-xs">{activity.time}</span>
-              </div>
-            ))}
+              ))
+            ) : (
+              <div className="text-center text-sm text-[var(--color-on-surface-variant)] py-4">No recent activity.</div>
+            )}
           </div>
         </div>
       </div>
