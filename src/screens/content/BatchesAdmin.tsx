@@ -164,44 +164,74 @@ export default function BatchesAdmin() {
         </div>
 
         {/* Data Table */}
-        <div className="lg:col-span-2 glass-card p-6 rounded-3xl overflow-hidden flex flex-col">
-          <h2 className="text-xl font-bold mb-4">Existing Batches</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-[var(--color-outline-variant)] text-[var(--color-on-surface-variant)] text-sm">
-                  <th className="pb-3 font-medium">Title</th>
-                  <th className="pb-3 font-medium">Type</th>
-                  <th className="pb-3 font-medium">Enrolled/Cap</th>
-                  <th className="pb-3 font-medium">Status</th>
-                  <th className="pb-3 font-medium text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm">
-                {loading ? (
-                  <tr><td colSpan={5} className="py-4 text-center">Loading...</td></tr>
-                ) : batches.length === 0 ? (
-                  <tr><td colSpan={5} className="py-4 text-center">No batches found.</td></tr>
-                ) : batches.map(batch => (
-                  <tr key={batch.id} className="border-b border-[var(--color-outline-variant)]/50 hover:bg-[var(--color-surface)]/30 transition-colors">
-                    <td className="py-3 font-medium">{batch.title}</td>
-                    <td className="py-3 text-[var(--color-on-surface-variant)]">{batch.type}</td>
-                    <td className="py-3">{batch.enrolled} / {batch.capacity}</td>
-                    <td className="py-3">
-                      <span className={`px-2 py-1 rounded-md text-xs font-bold ${batch.status === 'Active' ? 'bg-green-500/20 text-green-600' : batch.status === 'Full' ? 'bg-red-500/20 text-red-600' : 'bg-blue-500/20 text-blue-600'}`}>
+        <div className="lg:col-span-2 glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl overflow-hidden flex flex-col">
+          <h2 className="text-lg md:text-xl font-bold mb-4">Existing Batches</h2>
+          
+          {loading ? (
+            <div className="py-4 text-center">Loading...</div>
+          ) : batches.length === 0 ? (
+            <div className="py-4 text-center">No batches found.</div>
+          ) : (
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-[var(--color-outline-variant)] text-[var(--color-on-surface-variant)] text-sm">
+                      <th className="pb-3 font-medium">Title</th>
+                      <th className="pb-3 font-medium">Type</th>
+                      <th className="pb-3 font-medium">Enrolled/Cap</th>
+                      <th className="pb-3 font-medium">Status</th>
+                      <th className="pb-3 font-medium text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm">
+                    {batches.map(batch => (
+                      <tr key={batch.id} className="border-b border-[var(--color-outline-variant)]/50 hover:bg-[var(--color-surface)]/30 transition-colors">
+                        <td className="py-3 font-medium">{batch.title}</td>
+                        <td className="py-3 text-[var(--color-on-surface-variant)]">{batch.type}</td>
+                        <td className="py-3">{batch.enrolled} / {batch.capacity}</td>
+                        <td className="py-3">
+                          <span className={`px-2 py-1 rounded-md text-xs font-bold ${batch.status === 'Active' ? 'bg-green-500/20 text-green-600' : batch.status === 'Full' ? 'bg-red-500/20 text-red-600' : 'bg-blue-500/20 text-blue-600'}`}>
+                            {batch.status}
+                          </span>
+                        </td>
+                        <td className="py-3 text-right">
+                          <button onClick={() => handleDelete(batch.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors">
+                            <Trash2 size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden flex flex-col gap-4">
+                {batches.map(batch => (
+                  <div key={batch.id} className="bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl p-4 flex flex-col gap-2">
+                    <div className="flex justify-between items-start gap-2">
+                      <span className="font-bold text-[var(--color-on-surface)] leading-tight">{batch.title}</span>
+                      <span className={`px-2 py-1 rounded-md text-xs font-bold shrink-0 ${batch.status === 'Active' ? 'bg-green-500/20 text-green-600' : batch.status === 'Full' ? 'bg-red-500/20 text-red-600' : 'bg-blue-500/20 text-blue-600'}`}>
                         {batch.status}
                       </span>
-                    </td>
-                    <td className="py-3 text-right">
-                      <button onClick={() => handleDelete(batch.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors">
+                    </div>
+                    <div className="text-sm text-[var(--color-on-surface-variant)] flex justify-between items-center mt-1">
+                      <span>{batch.type}</span>
+                      <span className="font-medium">{batch.enrolled} / {batch.capacity}</span>
+                    </div>
+                    <div className="flex justify-end pt-3 border-t border-[var(--color-outline-variant)]/50 mt-1">
+                      <button onClick={() => handleDelete(batch.id)} className="flex items-center gap-2 px-3 py-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors text-sm font-medium">
                         <Trash2 size={16} />
+                        Delete
                       </button>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

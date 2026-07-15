@@ -136,43 +136,76 @@ export default function InterviewPrepAdmin() {
         </div>
 
         {/* Data Table */}
-        <div className="lg:col-span-2 glass-card p-6 rounded-3xl overflow-hidden flex flex-col">
-          <h2 className="text-xl font-bold mb-4">Existing Scenarios</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-[var(--color-outline-variant)] text-[var(--color-on-surface-variant)] text-sm">
-                  <th className="pb-3 font-medium">Role & Company</th>
-                  <th className="pb-3 font-medium">Questions</th>
-                  <th className="pb-3 font-medium">Difficulty</th>
-                  <th className="pb-3 font-medium">Success Rate</th>
-                  <th className="pb-3 font-medium text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm">
-                {loading ? (
-                  <tr><td colSpan={5} className="py-4 text-center">Loading...</td></tr>
-                ) : preps.length === 0 ? (
-                  <tr><td colSpan={5} className="py-4 text-center">No preps found.</td></tr>
-                ) : preps.map(prep => (
-                  <tr key={prep.id} className="border-b border-[var(--color-outline-variant)]/50 hover:bg-[var(--color-surface)]/30 transition-colors">
-                    <td className="py-3">
-                      <div className="font-medium">{prep.role}</div>
-                      <div className="text-[var(--color-on-surface-variant)] text-xs">{prep.company}</div>
-                    </td>
-                    <td className="py-3 text-[var(--color-on-surface-variant)]">{prep.questions_count}</td>
-                    <td className="py-3">{prep.difficulty}</td>
-                    <td className="py-3 text-[var(--color-on-surface-variant)]">{prep.success_rate}%</td>
-                    <td className="py-3 text-right">
-                      <button onClick={() => handleDelete(prep.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors">
+        <div className="lg:col-span-2 glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl overflow-hidden flex flex-col">
+          <h2 className="text-lg md:text-xl font-bold mb-4">Existing Scenarios</h2>
+          
+          {loading ? (
+            <div className="py-4 text-center">Loading...</div>
+          ) : preps.length === 0 ? (
+            <div className="py-4 text-center">No preps found.</div>
+          ) : (
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-[var(--color-outline-variant)] text-[var(--color-on-surface-variant)] text-sm">
+                      <th className="pb-3 font-medium">Role & Company</th>
+                      <th className="pb-3 font-medium">Questions</th>
+                      <th className="pb-3 font-medium">Difficulty</th>
+                      <th className="pb-3 font-medium">Success Rate</th>
+                      <th className="pb-3 font-medium text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm">
+                    {preps.map(prep => (
+                      <tr key={prep.id} className="border-b border-[var(--color-outline-variant)]/50 hover:bg-[var(--color-surface)]/30 transition-colors">
+                        <td className="py-3">
+                          <div className="font-medium">{prep.role}</div>
+                          <div className="text-[var(--color-on-surface-variant)] text-xs">{prep.company}</div>
+                        </td>
+                        <td className="py-3 text-[var(--color-on-surface-variant)]">{prep.questions_count}</td>
+                        <td className="py-3">{prep.difficulty}</td>
+                        <td className="py-3 text-[var(--color-on-surface-variant)]">{prep.success_rate}%</td>
+                        <td className="py-3 text-right">
+                          <button onClick={() => handleDelete(prep.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors">
+                            <Trash2 size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden flex flex-col gap-4">
+                {preps.map(prep => (
+                  <div key={prep.id} className="bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl p-4 flex flex-col gap-2">
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-[var(--color-on-surface)] leading-tight">{prep.role}</span>
+                        <span className="text-xs text-[var(--color-on-surface-variant)]">{prep.company}</span>
+                      </div>
+                      <span className="px-2 py-1 bg-[var(--color-surface-variant)] rounded-md text-xs font-bold shrink-0">
+                        {prep.difficulty}
+                      </span>
+                    </div>
+                    <div className="text-sm text-[var(--color-on-surface-variant)] flex justify-between items-center mt-1">
+                      <span>{prep.questions_count} Qs</span>
+                      <span className="font-medium text-green-600 bg-green-500/10 px-2 py-1 rounded-md">{prep.success_rate}% Success</span>
+                    </div>
+                    <div className="flex justify-end pt-3 border-t border-[var(--color-outline-variant)]/50 mt-1">
+                      <button onClick={() => handleDelete(prep.id)} className="flex items-center gap-2 px-3 py-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors text-sm font-medium">
                         <Trash2 size={16} />
+                        Delete
                       </button>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

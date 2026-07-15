@@ -151,47 +151,81 @@ export default function PyqsAdmin() {
         </div>
 
         {/* Data Table */}
-        <div className="lg:col-span-2 glass-card p-6 rounded-3xl overflow-hidden flex flex-col">
-          <h2 className="text-xl font-bold mb-4">Existing PYQs</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-[var(--color-outline-variant)] text-[var(--color-on-surface-variant)] text-sm">
-                  <th className="pb-3 font-medium">Exam / Year</th>
-                  <th className="pb-3 font-medium">Subject</th>
-                  <th className="pb-3 font-medium">Status</th>
-                  <th className="pb-3 font-medium">Downloads</th>
-                  <th className="pb-3 font-medium text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm">
-                {loading ? (
-                  <tr><td colSpan={5} className="py-4 text-center">Loading...</td></tr>
-                ) : pyqs.length === 0 ? (
-                  <tr><td colSpan={5} className="py-4 text-center">No PYQs found.</td></tr>
-                ) : pyqs.map(pyq => (
-                  <tr key={pyq.id} className="border-b border-[var(--color-outline-variant)]/50 hover:bg-[var(--color-surface)]/30 transition-colors">
-                    <td className="py-3">
-                      <div className="font-medium">{pyq.exam_type}</div>
-                      <div className="text-[var(--color-on-surface-variant)] text-xs">{pyq.year}</div>
-                    </td>
-                    <td className="py-3 text-[var(--color-on-surface-variant)]">{pyq.subject}</td>
-                    <td className="py-3">
-                      <span className={`px-2 py-1 rounded-md text-xs font-bold ${pyq.status === 'Verified' ? 'bg-green-500/20 text-green-600' : 'bg-yellow-500/20 text-yellow-600'}`}>
+        {/* Data Table */}
+        <div className="lg:col-span-2 glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl overflow-hidden flex flex-col">
+          <h2 className="text-lg md:text-xl font-bold mb-4">Existing PYQs</h2>
+          
+          {loading ? (
+            <div className="py-4 text-center">Loading...</div>
+          ) : pyqs.length === 0 ? (
+            <div className="py-4 text-center">No PYQs found.</div>
+          ) : (
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-[var(--color-outline-variant)] text-[var(--color-on-surface-variant)] text-sm">
+                      <th className="pb-3 font-medium">Exam / Year</th>
+                      <th className="pb-3 font-medium">Subject</th>
+                      <th className="pb-3 font-medium">Status</th>
+                      <th className="pb-3 font-medium">Downloads</th>
+                      <th className="pb-3 font-medium text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm">
+                    {pyqs.map(pyq => (
+                      <tr key={pyq.id} className="border-b border-[var(--color-outline-variant)]/50 hover:bg-[var(--color-surface)]/30 transition-colors">
+                        <td className="py-3">
+                          <div className="font-medium">{pyq.exam_type}</div>
+                          <div className="text-[var(--color-on-surface-variant)] text-xs">{pyq.year}</div>
+                        </td>
+                        <td className="py-3 text-[var(--color-on-surface-variant)]">{pyq.subject}</td>
+                        <td className="py-3">
+                          <span className={`px-2 py-1 rounded-md text-xs font-bold ${pyq.status === 'Verified' ? 'bg-green-500/20 text-green-600' : 'bg-yellow-500/20 text-yellow-600'}`}>
+                            {pyq.status}
+                          </span>
+                        </td>
+                        <td className="py-3 text-[var(--color-on-surface-variant)]">{pyq.downloads}</td>
+                        <td className="py-3 text-right">
+                          <button onClick={() => handleDelete(pyq.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors">
+                            <Trash2 size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden flex flex-col gap-4">
+                {pyqs.map(pyq => (
+                  <div key={pyq.id} className="bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl p-4 flex flex-col gap-2">
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-[var(--color-on-surface)] leading-tight">{pyq.exam_type}</span>
+                        <span className="text-xs text-[var(--color-on-surface-variant)]">{pyq.year}</span>
+                      </div>
+                      <span className={`px-2 py-1 rounded-md text-xs font-bold shrink-0 ${pyq.status === 'Verified' ? 'bg-green-500/20 text-green-600' : 'bg-yellow-500/20 text-yellow-600'}`}>
                         {pyq.status}
                       </span>
-                    </td>
-                    <td className="py-3 text-[var(--color-on-surface-variant)]">{pyq.downloads}</td>
-                    <td className="py-3 text-right">
-                      <button onClick={() => handleDelete(pyq.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors">
+                    </div>
+                    <div className="text-sm text-[var(--color-on-surface-variant)] flex justify-between items-center mt-1">
+                      <span>{pyq.subject}</span>
+                      <span className="font-medium text-xs bg-[var(--color-surface-variant)] px-2 py-1 rounded-md">{pyq.downloads} dls</span>
+                    </div>
+                    <div className="flex justify-end pt-3 border-t border-[var(--color-outline-variant)]/50 mt-1">
+                      <button onClick={() => handleDelete(pyq.id)} className="flex items-center gap-2 px-3 py-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors text-sm font-medium">
                         <Trash2 size={16} />
+                        Delete
                       </button>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

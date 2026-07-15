@@ -114,38 +114,67 @@ export default function StudyNotesAdmin() {
         </div>
 
         {/* Data Table */}
-        <div className="lg:col-span-2 glass-card p-6 rounded-3xl overflow-hidden flex flex-col">
-          <h2 className="text-xl font-bold mb-4">Existing Notes</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-[var(--color-outline-variant)] text-[var(--color-on-surface-variant)] text-sm">
-                  <th className="pb-3 font-medium">Title</th>
-                  <th className="pb-3 font-medium">Category</th>
-                  <th className="pb-3 font-medium">Description snippet</th>
-                  <th className="pb-3 font-medium text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm">
-                {loading ? (
-                  <tr><td colSpan={4} className="py-4 text-center">Loading...</td></tr>
-                ) : notes.length === 0 ? (
-                  <tr><td colSpan={4} className="py-4 text-center">No notes found.</td></tr>
-                ) : notes.map(note => (
-                  <tr key={note.id} className="border-b border-[var(--color-outline-variant)]/50 hover:bg-[var(--color-surface)]/30 transition-colors">
-                    <td className="py-3 font-medium">{note.title}</td>
-                    <td className="py-3 text-[var(--color-on-surface-variant)]">{note.category}</td>
-                    <td className="py-3 truncate max-w-[200px] text-[var(--color-on-surface-variant)]">{note.description}</td>
-                    <td className="py-3 text-right">
-                      <button onClick={() => handleDelete(note.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors">
+        <div className="lg:col-span-2 glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl overflow-hidden flex flex-col">
+          <h2 className="text-lg md:text-xl font-bold mb-4">Existing Notes</h2>
+          
+          {loading ? (
+            <div className="py-4 text-center">Loading...</div>
+          ) : notes.length === 0 ? (
+            <div className="py-4 text-center">No notes found.</div>
+          ) : (
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-[var(--color-outline-variant)] text-[var(--color-on-surface-variant)] text-sm">
+                      <th className="pb-3 font-medium">Title</th>
+                      <th className="pb-3 font-medium">Category</th>
+                      <th className="pb-3 font-medium">Description snippet</th>
+                      <th className="pb-3 font-medium text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm">
+                    {notes.map(note => (
+                      <tr key={note.id} className="border-b border-[var(--color-outline-variant)]/50 hover:bg-[var(--color-surface)]/30 transition-colors">
+                        <td className="py-3 font-medium">{note.title}</td>
+                        <td className="py-3 text-[var(--color-on-surface-variant)]">{note.category}</td>
+                        <td className="py-3 truncate max-w-[200px] text-[var(--color-on-surface-variant)]">{note.description}</td>
+                        <td className="py-3 text-right">
+                          <button onClick={() => handleDelete(note.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors">
+                            <Trash2 size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden flex flex-col gap-4">
+                {notes.map(note => (
+                  <div key={note.id} className="bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl p-4 flex flex-col gap-2">
+                    <div className="flex justify-between items-start gap-2">
+                      <span className="font-bold text-[var(--color-on-surface)] leading-tight">{note.title}</span>
+                      <span className="px-2 py-1 bg-[var(--color-surface-variant)] rounded-md text-xs font-bold shrink-0">
+                        {note.category}
+                      </span>
+                    </div>
+                    <div className="text-sm text-[var(--color-on-surface-variant)] mt-1 line-clamp-2">
+                      {note.description}
+                    </div>
+                    <div className="flex justify-end pt-3 border-t border-[var(--color-outline-variant)]/50 mt-1">
+                      <button onClick={() => handleDelete(note.id)} className="flex items-center gap-2 px-3 py-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors text-sm font-medium">
                         <Trash2 size={16} />
+                        Delete
                       </button>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -125,46 +125,81 @@ export default function MockTestsAdmin() {
         </div>
 
         {/* Data Table */}
-        <div className="lg:col-span-2 glass-card p-6 rounded-3xl overflow-hidden flex flex-col">
-          <h2 className="text-xl font-bold mb-4">Existing Tests</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-[var(--color-outline-variant)] text-[var(--color-on-surface-variant)] text-sm">
-                  <th className="pb-3 font-medium">Title</th>
-                  <th className="pb-3 font-medium">Time / Qs</th>
-                  <th className="pb-3 font-medium">Difficulty / Cat</th>
-                  <th className="pb-3 font-medium">Access</th>
-                  <th className="pb-3 font-medium text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm">
-                {loading ? (
-                  <tr><td colSpan={5} className="py-4 text-center">Loading...</td></tr>
-                ) : tests.length === 0 ? (
-                  <tr><td colSpan={5} className="py-4 text-center">No tests found.</td></tr>
-                ) : tests.map(test => (
-                  <tr key={test.id} className="border-b border-[var(--color-outline-variant)]/50 hover:bg-[var(--color-surface)]/30 transition-colors">
-                    <td className="py-3 font-medium">{test.title}</td>
-                    <td className="py-3 text-[var(--color-on-surface-variant)]">{test.duration_mins}m / {test.total_questions}q</td>
-                    <td className="py-3">{test.difficulty} • {test.category}</td>
-                    <td className="py-3">
+        <div className="lg:col-span-2 glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl overflow-hidden flex flex-col">
+          <h2 className="text-lg md:text-xl font-bold mb-4">Existing Tests</h2>
+          
+          {loading ? (
+            <div className="py-4 text-center">Loading...</div>
+          ) : tests.length === 0 ? (
+            <div className="py-4 text-center">No tests found.</div>
+          ) : (
+            <>
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-[var(--color-outline-variant)] text-[var(--color-on-surface-variant)] text-sm">
+                      <th className="pb-3 font-medium">Title</th>
+                      <th className="pb-3 font-medium">Time / Qs</th>
+                      <th className="pb-3 font-medium">Difficulty / Cat</th>
+                      <th className="pb-3 font-medium">Access</th>
+                      <th className="pb-3 font-medium text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm">
+                    {tests.map(test => (
+                      <tr key={test.id} className="border-b border-[var(--color-outline-variant)]/50 hover:bg-[var(--color-surface)]/30 transition-colors">
+                        <td className="py-3 font-medium">{test.title}</td>
+                        <td className="py-3 text-[var(--color-on-surface-variant)]">{test.duration_mins}m / {test.total_questions}q</td>
+                        <td className="py-3">{test.difficulty} • {test.category}</td>
+                        <td className="py-3">
+                          {test.is_pro ? (
+                            <span className="px-2 py-1 bg-yellow-500/20 text-yellow-600 rounded-md text-xs font-bold">Pro</span>
+                          ) : (
+                            <span className="px-2 py-1 bg-green-500/20 text-green-600 rounded-md text-xs font-bold">Free</span>
+                          )}
+                        </td>
+                        <td className="py-3 text-right">
+                          <button onClick={() => handleDelete(test.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors">
+                            <Trash2 size={16} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Card View */}
+              <div className="md:hidden flex flex-col gap-4">
+                {tests.map(test => (
+                  <div key={test.id} className="bg-[var(--color-surface)] border border-[var(--color-outline-variant)] rounded-xl p-4 flex flex-col gap-2">
+                    <div className="flex justify-between items-start gap-2">
+                      <span className="font-bold text-[var(--color-on-surface)] leading-tight">{test.title}</span>
                       {test.is_pro ? (
-                        <span className="px-2 py-1 bg-yellow-500/20 text-yellow-600 rounded-md text-xs font-bold">Pro</span>
+                        <span className="px-2 py-1 bg-yellow-500/20 text-yellow-600 rounded-md text-xs font-bold shrink-0">Pro</span>
                       ) : (
-                        <span className="px-2 py-1 bg-green-500/20 text-green-600 rounded-md text-xs font-bold">Free</span>
+                        <span className="px-2 py-1 bg-green-500/20 text-green-600 rounded-md text-xs font-bold shrink-0">Free</span>
                       )}
-                    </td>
-                    <td className="py-3 text-right">
-                      <button onClick={() => handleDelete(test.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors">
+                    </div>
+                    <div className="text-sm text-[var(--color-on-surface-variant)] flex flex-wrap gap-x-4 gap-y-1 mt-1">
+                      <span>{test.duration_mins}m / {test.total_questions}q</span>
+                      <span>•</span>
+                      <span>{test.difficulty}</span>
+                      <span>•</span>
+                      <span>{test.category}</span>
+                    </div>
+                    <div className="flex justify-end pt-3 border-t border-[var(--color-outline-variant)]/50 mt-1">
+                      <button onClick={() => handleDelete(test.id)} className="flex items-center gap-2 px-3 py-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors text-sm font-medium">
                         <Trash2 size={16} />
+                        Delete
                       </button>
-                    </td>
-                  </tr>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
