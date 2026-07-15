@@ -5,27 +5,27 @@ import type { AuthModel } from 'pocketbase';
 
 interface AuthContextType {
   user: AuthModel | null;
-  isAdmin: boolean;
+  isSuperuser: boolean;
   loading: boolean;
 }
 
-const AuthContext = createContext<AuthContextType>({ user: null, isAdmin: false, loading: true });
+const AuthContext = createContext<AuthContextType>({ user: null, isSuperuser: false, loading: true });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthModel | null>(pb.authStore.model);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(pb.authStore.isAdmin);
+  const [isSuperuser, setIsSuperuser] = useState(pb.authStore.isSuperuser);
 
   useEffect(() => {
     // Initial check
     setUser(pb.authStore.model);
-    setIsAdmin(pb.authStore.isAdmin);
+    setIsSuperuser(pb.authStore.isSuperuser);
     setLoading(false);
 
     // Subscribe to auth store changes
     const unsubscribe = pb.authStore.onChange((_token, model) => {
       setUser(model);
-      setIsAdmin(pb.authStore.isAdmin);
+      setIsSuperuser(pb.authStore.isSuperuser);
     });
 
     return () => {
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, loading }}>
+    <AuthContext.Provider value={{ user, isSuperuser, loading }}>
       {children}
     </AuthContext.Provider>
   );

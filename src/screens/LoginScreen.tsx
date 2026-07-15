@@ -14,7 +14,7 @@ export default function LoginScreen() {
     setError('');
 
     try {
-      await pb.admins.authWithPassword(email, password);
+      await pb.collection('_superusers').authWithPassword(email, password);
       // AuthContext will automatically redirect because pb.authStore updates
     } catch (err: any) {
       console.error(err);

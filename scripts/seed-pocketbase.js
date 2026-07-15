@@ -1,7 +1,7 @@
 import PocketBase from 'pocketbase';
 import readline from 'readline';
 
-const pb = new PocketBase('http://127.0.0.1:8090');
+const pb = new PocketBase(`${import.meta.env.VITE_POCKETBASE_URL}`);
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -22,7 +22,7 @@ async function main() {
 
   try {
     console.log(`\nAuthenticating as ${email}...`);
-    await pb.admins.authWithPassword(email, password);
+    await pb.collection('_superusers').authWithPassword(email, password);
     console.log("✅ Authenticated successfully.\n");
   } catch (err) {
     console.error("❌ Authentication failed. Make sure your email and password are correct, and PocketBase is running.");

@@ -11,10 +11,10 @@ import InterviewPrepAdmin from './screens/content/InterviewPrepAdmin';
 import PyqsAdmin from './screens/content/PyqsAdmin';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAdmin, loading } = useAuth();
+  const { isSuperuser, loading } = useAuth();
   
   if (loading) return <div className="h-screen w-screen flex items-center justify-center">Loading...</div>;
-  if (!isAdmin) return <Navigate to="/login" replace />;
+  if (!isSuperuser) return <Navigate to="/login" replace />;
   
   return <>{children}</>;
 };
